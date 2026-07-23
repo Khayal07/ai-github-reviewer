@@ -14,9 +14,22 @@ class Base(DeclarativeBase):
     """Declarative base for all ORM models."""
 
 
+def _normalize_url(url: str) -> str:
+    """Coerce managed-Postgres URLs to the psycopg3 driver.
+
+    Hosts like Render/Heroku hand out `postgres://` or `postgresql://`; both
+    resolve to psycopg2 under SQLAlchemy, which we don't install.
+    """
+    if url.startswith("postgres://"):
+        url = "postgresql+psycopg://" + url[len("postgres://") :]
+    elif url.startswith("postgresql://"):
+        url = "postgresql+psycopg://" + url[len("postgresql://") :]
+    return url
+
+
 def _make_engine():
     settings = get_settings()
-    url = settings.database_url
+    url = _normalize_url(settings.database_url)
     connect_args = {}
     if url.startswith("sqlite"):
         # Needed so a SQLite connection can be shared across threads

@@ -1,0 +1,34 @@
+# .ai-reviewer.yml — per-repository configuration for the AI PR Reviewer.
+# Drop this file at the root of any repository the reviewer runs on.
+# All keys are optional; omitted keys fall back to the defaults shown here.
+
+# Which review passes to run.
+passes:
+  correctness: true
+  security: true
+  style: true
+  tests: true
+
+# Findings at or above this severity cause a "request changes" verdict.
+# One of: info | low | medium | high | critical
+block_severity: high
+
+# Drop findings the model is less confident about than this (0.0 - 1.0).
+min_confidence: 0.6
+
+# Glob patterns for files the reviewer should skip entirely.
+ignore_paths:
+  - "**/*.lock"
+  - "**/*.min.js"
+  - "dist/**"
+  - "build/**"
+  - "vendor/**"
+  - "node_modules/**"
+
+# Safety cap: skip review if the PR touches more than this many files.
+max_files: 50
+
+# LLM override for this repo (falls back to service defaults when omitted).
+llm:
+  provider: openai        # openai | anthropic
+  model: gpt-4o           # e.g. gpt-4o, claude-opus-4-8

@@ -1,0 +1,10 @@
+# Normalise line endings: treat these as text with LF in the repo.
+* text=auto eol=lf
+
+# Binary assets should never be normalised.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pem binary

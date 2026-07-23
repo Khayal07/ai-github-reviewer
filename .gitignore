@@ -42,3 +42,6 @@ eval/reports/*.json
 
 # Docker
 *.pid
+
+# Tooling scratch
+.playwright-mcp/

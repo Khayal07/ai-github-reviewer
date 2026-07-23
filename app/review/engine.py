@@ -20,6 +20,7 @@ from app.review.schema import (
     compute_counts,
     compute_verdict,
     dedupe_findings,
+    merge_overlapping,
 )
 
 logger = logging.getLogger("ai_reviewer.engine")
@@ -56,6 +57,8 @@ class ReviewEngine:
             if f.confidence >= min_confidence and diff.get(f.file) is not None
         ]
         findings = dedupe_findings(findings)
+        # Collapse the same issue reported by multiple passes at nearby lines.
+        findings = merge_overlapping(findings)
 
         return ReviewResult(
             findings=findings,

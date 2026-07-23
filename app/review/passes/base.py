@@ -18,9 +18,14 @@ Return a JSON object matching this shape:
   "severity": "info|low|medium|high|critical", "title": str, "message": str,
   "suggestion": str|null, "confidence": number 0..1}]}
 
-Report every issue you find, including low-severity and uncertain ones, with an
-honest confidence — a downstream filter handles ranking. If there are no
-issues, return {"findings": []}. `line` must be a real line number from the
+Stay strictly within your assigned category (described in the system prompt).
+If an issue belongs to a different category, do not report it here — another
+pass covers it. Report each distinct issue exactly once, on its own line; do
+not restate the same problem multiple times.
+
+Report every issue in your category, including low-severity and uncertain ones,
+with an honest confidence — a downstream filter handles ranking. If there are
+no issues, return {"findings": []}. `line` must be a real line number from the
 diff. Keep `message` concrete and actionable; put a concrete fix in
 `suggestion` when you have one.
 """

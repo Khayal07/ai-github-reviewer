@@ -14,6 +14,7 @@ from app.review.schema import (
     compute_verdict,
     dedupe_findings,
     meets_threshold,
+    merge_overlapping,
     severity_rank,
 )
 
@@ -67,6 +68,31 @@ def test_dedupe_keeps_highest_severity_then_confidence():
     a = _finding(pass_type=PassType.correctness)
     b = _finding(pass_type=PassType.security)
     assert len(dedupe_findings([a, b])) == 2
+
+
+def test_merge_overlapping_collapses_cross_pass_same_and_adjacent_lines():
+    findings = [
+        _finding(line=7, pass_type=PassType.security, severity=Severity.high, confidence=0.95),
+        _finding(line=7, pass_type=PassType.correctness, severity=Severity.critical, confidence=1.0),
+        _finding(line=7, pass_type=PassType.style, severity=Severity.medium),
+        _finding(line=11, pass_type=PassType.security, severity=Severity.medium),
+        _finding(line=12, pass_type=PassType.correctness, severity=Severity.high),  # adjacent
+    ]
+    merged = merge_overlapping(findings, window=1)
+    # line 7 cluster -> 1 (keeps critical); lines 11/12 cluster -> 1 (keeps high)
+    assert len(merged) == 2
+    assert merged[0].line == 7 and merged[0].severity == Severity.critical
+    assert merged[1].severity == Severity.high
+
+
+def test_merge_overlapping_keeps_distinct_issues_apart():
+    findings = [
+        _finding(file="a.py", line=4, severity=Severity.high),
+        _finding(file="a.py", line=7, severity=Severity.critical),
+        _finding(file="b.py", line=4, severity=Severity.low),
+    ]
+    merged = merge_overlapping(findings, window=1)
+    assert len(merged) == 3  # different lines (>1 apart) and different files stay
 
 
 # --- engine ---------------------------------------------------------------

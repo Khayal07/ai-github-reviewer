@@ -1,0 +1,13 @@
+name: security_sql_injection
+description: Builds a SQL query by string concatenation of user input.
+files:
+  - filename: app/db.py
+    status: modified
+    patch: |
+      @@ -1,2 +1,4 @@
+       def q(name):
+      -    return db.get(name)
+      +    query = "SELECT * FROM users WHERE name = '" + name + "'"
+      +    return db.execute(query)
+ground_truth:
+  - {file: app/db.py, line: 2, pass_type: security, severity: high}

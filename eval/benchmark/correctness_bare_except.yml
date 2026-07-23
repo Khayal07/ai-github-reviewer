@@ -1,0 +1,15 @@
+name: correctness_bare_except
+description: Introduces a bare `except:` that swallows all errors.
+files:
+  - filename: app/run.py
+    status: modified
+    patch: |
+      @@ -1,2 +1,5 @@
+       def run():
+      -    work()
+      +    try:
+      +        work()
+      +    except:
+      +        pass
+ground_truth:
+  - {file: app/run.py, line: 4, pass_type: correctness, severity: medium}

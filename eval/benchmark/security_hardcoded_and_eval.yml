@@ -1,0 +1,16 @@
+name: security_hardcoded_and_eval
+description: Adds a hardcoded secret and evaluates untrusted input.
+files:
+  - filename: app/auth.py
+    status: modified
+    patch: |
+      @@ -1,3 +1,6 @@
+       import os
+      +
+      +PASSWORD = "hunter2"
+      +TOKEN = eval(input())
+       def login():
+           pass
+ground_truth:
+  - {file: app/auth.py, line: 3, pass_type: security, severity: high}
+  - {file: app/auth.py, line: 4, pass_type: security, severity: critical}

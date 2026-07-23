@@ -1,0 +1,14 @@
+name: correctness_none_check
+description: Compares to None with == instead of `is None`.
+files:
+  - filename: app/util.py
+    status: modified
+    patch: |
+      @@ -1,2 +1,5 @@
+       def check(x):
+      -    return x
+      +    if x == None:
+      +        return False
+      +    return x
+ground_truth:
+  - {file: app/util.py, line: 2, pass_type: correctness, severity: medium}

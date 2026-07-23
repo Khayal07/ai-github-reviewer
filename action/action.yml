@@ -1,0 +1,47 @@
+name: "AI PR Reviewer"
+description: "Multi-pass AI review of a pull request: inline comments + a summary verdict."
+author: "Khayal Izada"
+branding:
+  icon: "check-circle"
+  color: "purple"
+
+inputs:
+  github-token:
+    description: "Token used to read the PR and post review comments."
+    required: true
+    default: ${{ github.token }}
+  openai-api-key:
+    description: "OpenAI API key (when llm-provider is openai)."
+    required: false
+    default: ""
+  anthropic-api-key:
+    description: "Anthropic API key (when llm-provider is anthropic)."
+    required: false
+    default: ""
+  llm-provider:
+    description: "openai | anthropic"
+    required: false
+    default: "openai"
+  llm-model:
+    description: "Model name for the provider."
+    required: false
+    default: "gpt-4o"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install reviewer
+      shell: bash
+      run: pip install "${{ github.action_path }}/.."
+    - name: Run review
+      shell: bash
+      run: python -m action.entrypoint
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        LLM_PROVIDER: ${{ inputs.llm-provider }}
+        LLM_MODEL: ${{ inputs.llm-model }}

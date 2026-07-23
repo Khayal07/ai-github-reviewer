@@ -80,14 +80,18 @@ class GitHubClient:
         return files
 
     def get_file_content(
-        self, owner: str, repo: str, path: str, ref: str
+        self, owner: str, repo: str, path: str, ref: str | None = None
     ) -> str | None:
-        """Return the raw text of a file at a ref, or None if unavailable."""
+        """Return the raw text of a file at a ref, or None if unavailable.
+
+        When `ref` is omitted GitHub serves the repository's default branch.
+        """
+        params = {"ref": ref} if ref else None
         try:
             resp = self._request(
                 "GET",
                 f"/repos/{owner}/{repo}/contents/{path}",
-                params={"ref": ref},
+                params=params,
                 accept="application/vnd.github.raw",
             )
         except GitHubError:

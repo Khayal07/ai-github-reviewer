@@ -14,6 +14,7 @@ from fastapi import FastAPI
 from app import __version__
 from app.config import get_settings
 from app.db.session import init_db
+from app.webhook import router as webhook_router
 
 settings = get_settings()
 logging.basicConfig(level=settings.log_level.upper())
@@ -35,6 +36,9 @@ app = FastAPI(
     summary="Automated multi-pass pull-request reviewer.",
     lifespan=lifespan,
 )
+
+
+app.include_router(webhook_router)
 
 
 @app.get("/health", tags=["meta"])

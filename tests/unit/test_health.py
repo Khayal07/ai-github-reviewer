@@ -16,6 +16,10 @@ def test_health_ok():
 
 
 def test_root():
+    # Serves the built SPA when present, otherwise a JSON service descriptor.
     resp = client.get("/")
     assert resp.status_code == 200
-    assert resp.json()["service"] == "ai-github-reviewer"
+    if resp.headers["content-type"].startswith("application/json"):
+        assert resp.json()["service"] == "ai-github-reviewer"
+    else:
+        assert 'id="root"' in resp.text

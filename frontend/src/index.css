@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/* ---- design tokens: editor-panel palette, code-native type ------------ */
+@theme {
+  --color-ink: #14181f;
+  --color-ink-soft: #3a4250;
+  --color-paper: #eaeef3;
+  --color-surface: #ffffff;
+  --color-line: #dbe1e9;
+  --color-brand: #2f6fed;
+  --color-muted: #667085;
+
+  --color-crit: #b4232a;
+  --color-high: #e5484d;
+  --color-med: #e8963a;
+  --color-low: #c99a00;
+  --color-info: #2f6fed;
+  --color-approve: #159b57;
+
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* eyebrow / label — monospace, tracked out, the connective tissue */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+}
+
+/* signature element: the severity gutter — a linter's change indicator.
+   A row carries a left rule whose colour encodes its worst finding. */
+.gutter-row {
+  position: relative;
+  padding-left: 1.1rem;
+  transition: background 120ms ease, transform 120ms ease;
+}
+.gutter-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--tick, var(--color-line));
+}
+.gutter-row:hover {
+  background: color-mix(in srgb, var(--color-brand) 5%, transparent);
+}
+
+.tick-crit { --tick: var(--color-crit); }
+.tick-high { --tick: var(--color-high); }
+.tick-med  { --tick: var(--color-med); }
+.tick-low  { --tick: var(--color-low); }
+.tick-info { --tick: var(--color-info); }
+.tick-none { --tick: var(--color-approve); }
+
+/* line-number gutter for findings, straight out of an editor */
+.lineno {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  min-width: 3.4rem;
+  text-align: right;
+  user-select: none;
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  color: var(--color-ink-soft);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.nav-link:hover {
+  background: color-mix(in srgb, var(--color-brand) 8%, transparent);
+  color: var(--color-ink);
+}
+.nav-link.active {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise {
+  animation: rise 240ms ease both;
+}
